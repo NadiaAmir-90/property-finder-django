@@ -111,19 +111,15 @@ class Property(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta:
-        indexes = [
-            gis_models.Index(
-              fields=["point"],
-              name="property_point_idx",
-            ),
-            HnswIndex(
-              name="property_embedding_hnsw",
-              fields=["embedding"],
-              m=16,
-              ef_construction=64,
-              opclasses=["vector_cosine_ops"],
-            ),
+class Meta:
+    indexes = [
+        HnswIndex(
+            name="property_embedding_hnsw",
+            fields=["embedding"],
+            m=16,
+            ef_construction=64,
+            opclasses=["vector_cosine_ops"],
+        ),
     ]
 
 #property_image_model
@@ -136,6 +132,7 @@ class PropertyImage(models.Model):
 
     image = models.ImageField(
         upload_to="properties/%Y/%m/",
+        max_length=500,
     )
     alt_text = models.CharField(
         max_length=255,

@@ -90,6 +90,7 @@ DATABASES = {
         "NAME": "propertydb",
         "USER": "propertyuser",
         "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": "localhost",
         "PORT": "5442", 
     }
 }

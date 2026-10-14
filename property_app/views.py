@@ -1,4 +1,3 @@
-
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -13,7 +12,7 @@ def home(request):
 
     return render(
         request,
-        "home.html",
+        "property_app/home.html",
         {"form": form},
     )
 
@@ -21,13 +20,16 @@ def home(request):
 def property_list(request):
     form = PropertySearchForm(request.GET or None)
 
-    properties = (
-        Property.objects
-        .filter(is_active=True, status__iexact="available")
-        .select_related("location")
-        .prefetch_related("images")
-        .order_by("-is_featured", "-created_at")
-    )
+    # properties = (
+    #     Property.objects
+    #     .filter(is_active=False, status__iexact="published")
+    #     .select_related("location")
+    #     .prefetch_related("images")
+    #     .order_by("-is_featured", "-created_at")
+
+    # )
+
+    properties = Property.objects.all()
 
     if form.is_valid():
         city = form.cleaned_data.get("city")
@@ -67,12 +69,12 @@ def property_list(request):
                 property_type__icontains=property_type
             )
 
-    paginator = Paginator(properties, 6)
+    paginator = Paginator(properties, 2)
     page_obj = paginator.get_page(request.GET.get("page"))
 
     return render(
         request,
-        "property_list.html",
+        "property_app/property_list.html",
         {
             "form": form,
             "page_obj": page_obj,
@@ -85,7 +87,7 @@ def property_detail(request, slug):
         Property.objects
         .filter(is_active=True)
         .select_related("location")
-        .prefetch_related("images")
+        # .prefetch_related("images")
         .annotate(
             distance_from_location=Distance(
                 "point",
@@ -97,6 +99,6 @@ def property_detail(request, slug):
 
     return render(
         request,
-        "property_detail.html",
+        "property_app/property_detail.html",
         {"property": property_obj},
     )

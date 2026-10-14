@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Listings</title>
+</head>
+<body>
+    <header>
+        <a href="{% url 'home' %}">Property Finder</a>
+        <h1>Available Properties</h1>
+    </header>
+
+    <section>
+        <h2>Filter properties</h2>
+
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit">Apply Filters</button>
+        </form>
+    </section>
+
+    <main>
+        <p>Matching properties: {{ page_obj.paginator.count }}</p>
+
+        {% for property in page_obj %}
+            <article>
+                {% with images=property.image_list %}
+                    {% if images %}
+                        <img
+                            src="{{ images.0 }}"
+                            alt="{{ property.title }}"
+                            width="280"
+                        >
+                    {% endif %}
+                {% endwith %}
+
+                <h2>
+                    <a href="{% url 'property_detail' property.slug %}">
+                        {{ property.title }}
+                    </a>
+                </h2>
+
+                <p>{{ property.location.city }}, {{ property.location.country }}</p>
+                <p>Price: {{ property.price }}</p>
+                <p>Bedrooms: {{ property.bedrooms }}</p>
+                <p>Bathrooms: {{ property.bathrooms }}</p>
+                <p>Type: {{ property.property_type }}</p>
+
+                {% if property.is_featured %}
+                    <strong>Featured property</strong>
+                {% endif %}
+            </article>
+            <hr>
+        {% empty %}
+            <p>No matching properties found. Try changing your filters.</p>
+        {% endfor %}
+    </main>
+
+    <nav aria-label="Pagination">
+        {% if page_obj.has_previous %}
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">
+                Previous
+            </a>
+        {% endif %}
+
+        <span>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">
+                Next
+            </a>
+        {% endif %}
+    </nav>
+</body>
+</html>

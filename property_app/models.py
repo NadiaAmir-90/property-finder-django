@@ -108,6 +108,15 @@ class Property(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    images = models.TextField(blank=True, null=True)
+
+    @property
+    def image_list(self):
+        """Splits pipe-separated image string into clean individual URLs."""
+        if self.images:
+            return [img.strip() for img in self.images.split('|') if img.strip()]
+        return []
+
     def __str__(self):
         return self.title
 
@@ -127,7 +136,8 @@ class PropertyImage(models.Model):
     property = models.ForeignKey(
         Property,
         on_delete=models.CASCADE,
-        related_name="images",
+        related_name="property_images"
+
     )
 
     image = models.ImageField(

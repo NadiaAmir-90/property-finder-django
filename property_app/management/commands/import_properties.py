@@ -77,20 +77,20 @@ class Command(BaseCommand):
                 },
             )
 
-            # 4. Handle Images safely without get_or_create on ImageFields
+            # 4. Images ('|' diye alada)
             if pd.notna(row.get("images")):
-                image_paths = str(row["images"]).split(",")
-                for index, img_path in enumerate(image_paths):
-                    img_path_clean = img_path.strip()
-                    if img_path_clean:
-                        PropertyImage.objects.update_or_create(
-                            property=property_obj,
-                            image=img_path_clean, # Note: if this is a URL/path, ensure it fits max_length if your image field is a CharField, or handles file storage properly.
-                            defaults={
-                                "is_primary": (index == 0),
-                                "sort_order": index,
-                            }
-                        )
+                image_values = [
+                    x.strip() for x in str(row["images"]).split("|") if x.strip()
+                ]
+                for index, img in enumerate(image_values):
+                    PropertyImage.objects.update_or_create(
+                        property=property_obj,
+                        image=img,
+                        defaults={
+                            "is_primary": (index == 0),
+                            "sort_order": index,
+                        },
+                    )
 
         self.stdout.write(
             self.style.SUCCESS("CSV import completed successfully!")

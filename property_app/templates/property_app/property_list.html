@@ -1,0 +1,193 @@
+
+{% extends "property_app/base.html" %}
+
+{% block title %}Explore Properties | NestFinder{% endblock %}
+
+{% block content %}
+<section class="list-hero">
+    <div class="container">
+        <span class="eyebrow">EXPLORE WITH CONFIDENCE</span>
+        <h1>Find your perfect place.</h1>
+        <p>Search properties and discover the details that matter to you.</p>
+
+        <form class="search-form search-form-small"
+              action="{% url 'property_list' %}" method="get">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search by title or location..."
+                aria-label="Search properties"
+            >
+            <button type="submit">Search <span>→</span></button>
+        </form>
+    </div>
+</section>
+
+<section class="container section">
+    <div class="results-heading">
+        <div>
+            <h2>
+                {% if query %}
+                    Results for "{{ query }}"
+                {% else %}
+                    Available properties
+                {% endif %}
+            </h2>
+            <p>
+                Page {{ page_obj.number }}
+                of {{ page_obj.paginator.num_pages }}
+            </p>
+        </div>
+
+        <span class="result-count">
+            {{ page_obj.paginator.count }} properties
+        </span>
+    </div>
+
+    {% if properties %}
+        <div class="property-grid">
+            {% for property in properties %}
+                <article class="property-card">
+
+                    <div class="property-gallery">
+                        {% if property.ordered_images %}
+                            <div class="property-gallery-track">
+                                {% for image in property.ordered_images %}
+                                    <a
+                                        class="property-gallery-item"
+                                        href="{% url 'property_detail' property.slug %}"
+                                        aria-label="View {{ property.title }} - image {{ forloop.counter }}"
+                                    >
+                                        {% if image.image %}
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ image.alt_text|default:property.title }}"
+                                                loading="lazy"
+                                            >
+                                        {% else %}
+                                            <div class="image-placeholder">
+                                                <span>⌂</span>
+                                                <p>Image unavailable</p>
+                                            </div>
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <a
+                                class="property-image"
+                                href="{% url 'property_detail' property.slug %}"
+                            >
+                                <div class="image-placeholder">
+                                    <span>⌂</span>
+                                    <p>No images available</p>
+                                </div>
+                            </a>
+                        {% endif %}
+
+                        {% if property.is_featured %}
+                            <span class="featured-badge">Featured</span>
+                        {% endif %}
+
+                        {% if property.ordered_images %}
+                            <span class="photo-count">
+                                {{ property.ordered_images|length }} photos
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="property-info">
+                        <div class="property-type">
+                            {{ property.property_type|default:"Property" }}
+                        </div>
+
+                        <h3>
+                            <a href="{% url 'property_detail' property.slug %}">
+                                {{ property.title }}
+                            </a>
+                        </h3>
+
+                        <p class="property-location">
+                            <span aria-hidden="true">⌖</span>
+                            {% firstof property.location.city property.location.name property.address "Location unavailable" %}
+                        </p>
+
+                        <div class="property-features">
+                            <span>🛏 {{ property.bedrooms }} beds</span>
+                            <span>🛁 {{ property.bathrooms }} baths</span>
+
+                            {% if property.area_sqft %}
+                                <span>{{ property.area_sqft }} sqft</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-bottom">
+                            <div>
+                                <span class="price-label">Property price</span>
+                                <p class="property-price">
+                                    {{ property.price|floatformat:2 }}
+                                </p>
+                            </div>
+
+                            <a
+                                class="details-link"
+                                href="{% url 'property_detail' property.slug %}"
+                                aria-label="View {{ property.title }}"
+                            >
+                                View details →
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            <nav class="pagination" aria-label="Property pages">
+                {% if page_obj.has_previous %}
+                    <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">
+                        ← Previous
+                    </a>
+                {% else %}
+                    <span class="disabled">← Previous</span>
+                {% endif %}
+
+                <span class="page-number">
+                    Page {{ page_obj.number }}
+                    / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}">
+                        Next →
+                    </a>
+                {% else %}
+                    <span class="disabled">Next →</span>
+                {% endif %}
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">⌕</div>
+            <h2>No properties found</h2>
+
+            <p>
+                {% if query %}
+                    We couldn't find a published property matching
+                    "{{ query }}". Try another title, city, or neighborhood.
+                {% else %}
+                    No published properties are available right now.
+                {% endif %}
+            </p>
+
+            <a class="primary-link" href="{% url 'property_list' %}">
+                View all properties
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+```

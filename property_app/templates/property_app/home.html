@@ -1,0 +1,48 @@
+
+{% extends "property_app/base.html" %}
+
+{% block title %}Find your next home | NestFinder{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
+        <h1>Find a place<br>to call <span>home.</span></h1>
+        <p class="hero-description">
+            Explore properties, discover new neighborhoods,
+            and find a space that fits your lifestyle.
+        </p>
+
+        <form class="search-form" action="{% url 'property_list' %}" method="get">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input
+                type="search"
+                name="q"
+                placeholder="Search by property title or location..."
+                aria-label="Search properties by title or location"
+                required
+            >
+            <button type="submit">Search properties <span>→</span></button>
+        </form>
+
+        <div class="hero-points">
+            <span>✓ Find by location</span>
+            <span>✓ Explore property details</span>
+            <span>✓ Browse with ease</span>
+        </div>
+    </div>
+</section>
+
+<section class="section container">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">START EXPLORING</span>
+            <h2>Your next home is out there.</h2>
+            <p>Search by a city, neighborhood, or property title.</p>
+        </div>
+        <a class="text-link" href="{% url 'property_list' %}">
+            Browse properties →
+        </a>
+    </div>
+</section>
+{% endblock %}

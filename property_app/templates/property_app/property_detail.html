@@ -1,0 +1,151 @@
+
+{% extends "property_app/base.html" %}
+
+{% block title %}{{ property.title }} | NestFinder{% endblock %}
+
+{% block content %}
+<section class="container detail-page">
+    <a class="back-link" href="{% url 'property_list' %}">← Back to properties</a>
+
+    <div class="detail-heading">
+        <div>
+            <span class="eyebrow">{{ property.property_type|default:"PROPERTY" }}</span>
+            <h1>{{ property.title }}</h1>
+            <p class="property-location">
+                ⌖ {% firstof property.location.city property.location.name property.address %}
+            </p>
+        </div>
+        <div class="detail-price">{{ property.price|floatformat:2 }}</div>
+    </div>
+
+    {% if property.ordered_images %}
+        <div class="detail-gallery">
+            {% for image in property.ordered_images %}
+                {% if image.image %}
+                    <div class="gallery-image">
+                        <img
+                            src="{{ image.image.url }}"
+                            alt="{{ image.alt_text|default:property.title }}"
+                        >
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="detail-no-image image-placeholder">
+            <span>⌂</span>
+            <p>No property images available</p>
+        </div>
+    {% endif %}
+
+    <div class="detail-layout">
+        <section class="detail-main">
+            <h2>About this property</h2>
+            <p class="description">
+                {{ property.description|default:"No description available."|linebreaksbr }}
+            </p>
+
+            <h2>Property overview</h2>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <span>Bedrooms</span>
+                    <strong>{{ property.bedrooms }}</strong>
+                </div>
+                <div class="overview-item">
+                    <span>Bathrooms</span>
+                    <strong>{{ property.bathrooms }}</strong>
+                </div>
+                <div class="overview-item">
+                    <span>Area</span>
+                    <strong>
+                        {% if property.area_sqft %}
+                            {{ property.area_sqft }} sqft
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </strong>
+                </div>
+                <div class="overview-item">
+                    <span>Property type</span>
+                    <strong>{{ property.property_type|default:"Not specified" }}</strong>
+                </div>
+            </div>
+
+            <h2>Location</h2>
+            <p>
+                {% firstof property.address property.location.address property.location.name %}
+            </p>
+
+            {% if property.distance_from_location %}
+                <p>
+                    Distance from location reference:
+                    <strong>{{ property.distance_from_location.km|floatformat:2 }} km</strong>
+                </p>
+            {% endif %}
+        </section>
+
+        <aside class="detail-sidebar">
+            <span class="price-label">Listed price</span>
+            <div class="sidebar-price">{{ property.price|floatformat:2 }}</div>
+            <p>Interested in this property?</p>
+            <a class="primary-link full-width"
+               href="mailto:contact@example.com?subject={{ property.title|urlencode }}">
+                Contact us
+            </a>
+            <p class="sidebar-note">
+                This is a demonstration contact link. Replace it with your real contact workflow.
+            </p>
+        </aside>
+    </div>
+</section>
+
+
+<section class="nearby-properties">
+    <h2>Nearby Properties</h2>
+
+    <div class="nearby-properties-grid">
+        {% for nearby in nearby_properties %}
+            <article class="nearby-property">
+          <a
+    class="nearby-property-image-link"
+    href="{% url 'property_detail' slug=nearby.slug %}"
+>
+    {% with image=nearby.ordered_images.0 %}
+        {% if image and image.image %}
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ image.alt_text|default:nearby.title }}"
+                class="nearby-property-image"
+            >
+        {% else %}
+            <div class="nearby-property-image-placeholder">
+                No image available
+            </div>
+        {% endif %}
+    {% endwith %}
+</a>
+
+                <div class="nearby-property-content">
+                    <h3>
+                        <a href="{% url 'property_detail' slug=nearby.slug %}">
+                            {{ nearby.title }}
+                        </a>
+                    </h3>
+
+                    <p>
+                        {% firstof nearby.location.city nearby.location.name nearby.address %}
+                    </p>
+
+                    <p>
+                        Distance:
+                        <strong>{{ nearby.distance.km|floatformat:1 }} km away</strong>
+                    </p>
+                </div>
+            </article>
+        {% empty %}
+            <p class="empty-message">No nearby properties found.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

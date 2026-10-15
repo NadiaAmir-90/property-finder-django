@@ -11,4 +11,5 @@ dependencies = [
     "pillow>=12.3.0",
     "psycopg2-binary>=2.9.13",
     "python-dotenv>=1.2.4",
+    "sentence-transformers>=6.1.0",
 ]

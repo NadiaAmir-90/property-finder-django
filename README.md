@@ -95,22 +95,6 @@ The project is designed to cover these areas:
 | `uv` | Python dependency and virtual-environment management |
 
 
-## Production notes
-
-Before production use:
-
-- Set `DEBUG = False`.
-- Configure `ALLOWED_HOSTS` and HTTPS correctly.
-- Keep secrets outside source control.
-- Use a production-grade WSGI/ASGI server rather than Django's development server.
-- Use persistent database storage and backups.
-- Configure durable media storage.
-- Review authentication, authorization, input validation, and upload security.
-- Add tests for API validation, spatial queries, and vector ranking.
-- Review database indexes and query performance.
-- Apply migrations as a controlled deployment step.
-- Monitor logs and errors without logging credentials or sensitive data.
-
 ## License
 
 This project was developed as part of the **W3 Engineers Ltd Internship Assignment-06**.

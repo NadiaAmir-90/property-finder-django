@@ -38,6 +38,12 @@ class Location(models.Model):
         blank=True,
     )
 
+    semantic_embedding = VectorField(
+    dimensions=384,
+    null=True,
+    blank=True,
+)
+
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(
@@ -50,6 +56,17 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+        
+    class Meta:
+        indexes = [
+            HnswIndex(
+                name="loc_semantic_hnsw",
+                fields=["semantic_embedding"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_cosine_ops"],
+            ),
+        ]
 
 
 class Property(models.Model):

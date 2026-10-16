@@ -1,5 +1,6 @@
 
 {% extends "property_app/base.html" %}
+{% load static %}
 
 {% block title %}Find your next home | NestFinder{% endblock %}
 
@@ -13,17 +14,39 @@
             and find a space that fits your lifestyle.
         </p>
 
-        <form class="search-form" action="{% url 'property_list' %}" method="get">
-            <span class="search-icon" aria-hidden="true">⌕</span>
-            <input
-                type="search"
-                name="q"
-                placeholder="Search by property title or location..."
-                aria-label="Search properties by title or location"
-                required
-            >
-            <button type="submit">Search properties <span>→</span></button>
-        </form>
+
+<form class="search-form" action="{% url 'property_list' %}" method="get">
+    <span class="search-icon" aria-hidden="true">⌕</span>
+
+    <div class="search-input-wrapper">
+        <input
+            type="search"
+            id="property-search"
+            name="q"
+            placeholder="Search by property title or location..."
+            aria-label="Search properties by title or location"
+            autocomplete="off"
+            required
+        >
+
+        <div
+            id="property-suggestions"
+            class="property-suggestions"
+            role="listbox"
+            aria-label="Property suggestions"
+            hidden
+        ></div>
+    </div>
+
+    <button type="submit">
+        Search properties <span>→</span>
+    </button>
+</form>
+
+
+
+<script src="{% static 'js/autocomplete.js' %}" defer></script>
+
 
         <div class="hero-points">
             <span>✓ Find by location</span>

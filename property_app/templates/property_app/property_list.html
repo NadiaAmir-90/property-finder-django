@@ -62,7 +62,7 @@
                                     >
                                         {% if image.image %}
                                             <img
-                                                src="{{ image.image.url }}"
+                                                src="{{ image.image}}"
                                                 alt="{{ image.alt_text|default:property.title }}"
                                                 loading="lazy"
                                             >
@@ -190,4 +190,3 @@
     {% endif %}
 </section>
 {% endblock %}
-```

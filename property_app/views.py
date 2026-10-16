@@ -300,3 +300,44 @@ def property_hybrid_search(request):
         "radius_km": radius_km,
         "results": results,
     })
+def property_suggestions(request):
+    query = request.GET.get("q", "").strip()
+
+    # At least 3 characters are required
+    if len(query) < 3:
+        return JsonResponse({"results": []})
+
+    properties = (
+        Property.objects
+        .filter(
+            Q(title__icontains=query)
+            | Q(location__name__icontains=query)
+            | Q(location__city__icontains=query)
+            | Q(location__state__icontains=query)
+            | Q(location__country__icontains=query)
+            | Q(location__address__icontains=query)
+            | Q(address__icontains=query),
+            is_active=True,
+            status__iexact="published",
+        )
+        .select_related("location")
+        .order_by("-is_featured", "-created_at")
+        .distinct()[:10]
+    )
+
+    results = [
+        {
+            "id": prop.id,
+            "title": prop.title,
+            "slug": prop.slug,
+            "location_name": (
+                prop.location.name if prop.location else ""
+            ),
+            "city_name": (
+                prop.location.city if prop.location else ""
+            ),
+        }
+        for prop in properties
+    ]
+
+    return JsonResponse({"results": results})

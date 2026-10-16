@@ -24,7 +24,7 @@
                 {% if image.image %}
                     <div class="gallery-image">
                         <img
-                            src="{{ image.image.url }}"
+                            src="{{ image.image}}"
                             alt="{{ image.alt_text|default:property.title }}"
                         >
                     </div>
@@ -113,7 +113,7 @@
     {% with image=nearby.ordered_images.0 %}
         {% if image and image.image %}
             <img
-                src="{{ image.image.url }}"
+                src="{{ image.image }}"
                 alt="{{ image.alt_text|default:nearby.title }}"
                 class="nearby-property-image"
             >

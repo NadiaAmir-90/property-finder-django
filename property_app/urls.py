@@ -25,5 +25,10 @@ urlpatterns = [
         views.property_detail,
         name="property_detail",
     ),
+    path(
+        "api/properties/suggestions/",
+        views.property_suggestions,
+        name="property_suggestions",
+    ),
 
 ]
